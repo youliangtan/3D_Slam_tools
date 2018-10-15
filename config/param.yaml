@@ -1,0 +1,20 @@
+
+test: "Param is working!"
+
+## Lase Odometry Node
+ioRatio: 2            # default 2
+deltaTAbort: 0.2      # default 0.1
+deltaRAbort: 0.2      # default 0.1
+
+## Laser Mapping Node
+cornerFilterSize: 0.05          # default 0.2
+surfaceFilterSize: 0.05          # default 0.4
+mapFilterSize: 0.8              # default 0.6
+
+## dynamic points removal 
+scanPeriod: 0.1
+isRemoveMovingObject: true
+gradThreshold: 20
+phiRegion: 5
+phiDiffFactor: 0.1
+reserveDistance: 0.001

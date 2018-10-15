@@ -22,7 +22,7 @@
 
   <node pkg="loam_velodyne" type="laserMapping" name="laserMapping" output="screen">
     <remap from="/imu/data" to="/imu/imu"/>
-    <rosparam command="load" file="$(find loam_velodyne)/config/param.yaml" />
+    <rosparam command="load" file="$(find 3D_Slam_tools)/config/param.yaml" />
   </node>
 
   <node pkg="loam_velodyne" type="transformMaintenance" name="transformMaintenance" output="screen">
@@ -31,7 +31,7 @@
   <node pkg="loam_velodyne" type="motionRemoval" name="motionRemoval" output="screen">
   </node>
 
-  <node name="player" pkg="rosbag" type="play" output="screen" args=" -r 1 -s 0 -q --clock --pause /home/youliang/rosbag/horizontal.bag"/>
+  <node name="player" pkg="rosbag" type="play" output="screen" args=" -r 0.5 -s 0 -q --clock --pause /home/youliang/rosbag/imu_office_large.bag  /imu/imu:=/imu_null"/>
 
   <group if="$(arg rviz)">
     <node launch-prefix="nice" pkg="rviz" type="rviz" name="rviz" args="-d $(find loam_velodyne)/rviz_cfg/loam_velodyne.rviz" />
