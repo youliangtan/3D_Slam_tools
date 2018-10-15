@@ -12,6 +12,7 @@ Tools to work along side with LOAM 3D lidar slam and Octomaping
 ### Compilation
 
 > catkin_make -DCMAKE_BUILD_TYPE=Release
+
 > source devel/setup.bash
 
 ## Run Tools
@@ -25,6 +26,7 @@ To save .pcd and .bt files on fly, Run:
 
 Convert .bt file to slices ocupancy map png
 >roslaunch 3D_Slam_tools octomap_mapping.launch path:=PATH_TO_BT_FILE z_min:=OPTIONAL_FLOAT  z_max:=OPTIONAL_FLOAT
+
 >rosrun map_server map_saver
 
 edit config file in `config/param.yaml` folder
