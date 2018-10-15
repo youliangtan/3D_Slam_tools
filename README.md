@@ -3,11 +3,11 @@ Tools to work along side with LOAM 3D lidar slam and Octomaping
 
 ## Setup Environment
 - ROS
-- Download LOAM Velodyne Mapping, 
+- Download LOAM Velodyne Mapping,  
 `git clone git@github.com:yutingkevinlai/velodyne_slam.git` with dynamic object removal
 
-- Octomapping
-- map_saver
+- octo_mapping (git clone)
+- map_saver  (apt-get install navigation)
 
 ### Compilation
 
@@ -23,8 +23,11 @@ To save .pcd and .bt files on fly, Run:
 
 > rosrun 3D_Slam_tools pcd2octomap_node
 
-edit config file in `config/param.yaml` folder
+Convert .bt file to slices ocupancy map png
+>roslaunch 3D_Slam_tools octomap_mapping.launch path:=PATH_TO_BT_FILE z_min:=OPTIONAL_FLOAT  z_max:=OPTIONAL_FLOAT
+>rosrun map_server map_saver
 
+edit config file in `config/param.yaml` folder
 
 
 ### Straigtener
