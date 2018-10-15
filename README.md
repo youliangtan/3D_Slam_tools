@@ -9,6 +9,8 @@ Tools to work along side with LOAM 3D lidar slam and Octomaping
 - Octomapping
 - map_saver
 
+### Compilation
+
 > catkin_make -DCMAKE_BUILD_TYPE=Release
 > source devel/setup.bash
 
@@ -24,10 +26,12 @@ To save .pcd and .bt files on fly, Run:
 edit config file in `config/param.yaml` folder
 
 
+
 ### Straigtener
 to straighten the output .pcd file of a 3D map by using teleop of turtlebot (for convenience sake). User need to open RVIz and teleop to slowly straighten the map, then ctrl-c it to get the output .bt octomap file.
 
 > rosrun 3D_Slam_tools pcd2octomap <input_file> <output_file> --rotate
+
 
 
 ### IMU TF publisher
@@ -40,5 +44,7 @@ Use ROS driver below to read imu publish data, in /imu/imu and /imu/imu topics
 To run the node:
 
 > rosrun 3D_Slam_tools imu_TFpublisher
+
+
 
 ### TO BE CONTINUE
