@@ -16,6 +16,7 @@ source devel/setup.bash
 ## Run Tools
 
 ### 3D Mapping
+Run with LOAM package with ROS bag file (default path is in launch file)
 ```
 roslaunch 3D_Slam_tools loam_project.launch
 ````
