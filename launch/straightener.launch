@@ -1,0 +1,21 @@
+<!-- 
+	input file is a .pcd file
+	output file is a straighten .bt file
+-->
+
+<launch>
+
+    <arg name="input_path" />
+	<arg name="output_path" />
+	<arg name="rviz" default="true" />
+	
+	<node pkg="3D_Slam_tools" type="pcd2octomap" name="pcd2octomap" args="$(arg input_path) $(arg output_path) --rotate" />
+
+	<node pkg="turtlesim" type="turtle_teleop_key" name="turtle_teleop_key" args="" />
+
+
+	<group if="$(arg rviz)">
+    	<node launch-prefix="nice" pkg="rviz" type="rviz" name="rviz" args="-d $(find 3D_Slam_tools)/rviz/world.rviz" />
+  	</group>
+
+</launch>
