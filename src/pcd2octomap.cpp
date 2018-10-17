@@ -1,3 +1,6 @@
+/*
+Usage: pcd2octomap <input_file> <output_file> --rotate
+*/
 
 #include <iostream>
 #include <assert.h>
@@ -21,7 +24,7 @@ using namespace std;
 double octotree_co =  0.05; //octo tree coefficient
 float roll = 0;
 float pitch = 0;
-float angle_resolution = 0.005;
+float angle_resolution = 0.002;
 
 
 // convert pointcloudXYZ data to octotree format, and output it
@@ -81,9 +84,9 @@ void pointcloud_rotate(pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud, pcl::Poi
     transform.rotate (Eigen::AngleAxisf (pitch, Eigen::Vector3f::UnitY()));
     transform.rotate (Eigen::AngleAxisf (1.5, Eigen::Vector3f::UnitZ()));
 
-    // Print the transformation
-    printf ("\n using an Affine3f\n");
-    std::cout << transform.matrix() << std::endl;
+    // // Print the transformation
+    // printf ("\n using an Affine3f\n");
+    // std::cout << transform.matrix() << std::endl;
 
     // // Executing the transformation
     pcl::transformPointCloud (*input_cloud, *output_cloud, transform);
@@ -119,9 +122,11 @@ int main( int argc, char** argv )
 
     // io file
     string input_file = argv[1], output_file = argv[2];
+    cout <<"Input File is: " << input_file << endl;
+
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ> ());
     pcl::io::loadPCDFile<pcl::PointXYZ> ( input_file, *cloud );
-
+    
     cout<<"OctoTree coefficient is = "<< octotree_co <<endl;
     cout<<"point cloud loaded, point size = "<<cloud->points.size()<<endl;
  

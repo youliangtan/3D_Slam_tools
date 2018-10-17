@@ -21,6 +21,7 @@
 void imu_msgCallBack2(const sensor_msgs::Imu::ConstPtr& imuIn){
   ROS_INFO("test exist %f", imuIn->linear_acceleration.z);   // assume accel input is in terms from 0-1
 
+  // quaternion to rpy
   double roll, pitch, yaw;
   tf::Quaternion orientation;
   tf::quaternionMsgToTF(imuIn->orientation, orientation);
