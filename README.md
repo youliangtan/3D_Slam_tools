@@ -33,10 +33,16 @@ edit config file in `config/param.yaml` folder
 
 
 ### Straigtener
-to straighten the output .pcd file of a 3D map by using teleop of turtlebot (for convenience sake). User need to open RVIz and teleop to slowly straighten the map, then ctrl-c it to get the output .bt octomap file.
+to straighten the output .pcd file of a 3D map by using teleop of turtlebot (for convenience sake). User need to open RVIz and `rosrun turtlesim turtle_teleop_key` teleop to slowly straighten the map, then ctrl-c it to get the output .bt octomap file.
 
 ```
-rosrun 3D_Slam_tools pcd2octomap <input_file> <output_file> --rotate
+rosrun 3D_Slam_tools pcd2octomap <input_pcd_file> <output_bt_file> --rotate
+````
+
+For launch file;
+
+```
+roslaunch 3D_Slam_tools straightener.launch input_path:="/home/youliang/catkin_ws/input_PC.pcd" output_path:="/home/youliang/catkin_ws/output_octo.bt"
 ````
 
 
