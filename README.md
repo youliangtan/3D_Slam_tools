@@ -39,11 +39,13 @@ to straighten the output .pcd file of a 3D map by using teleop of turtlebot (for
 rosrun 3D_Slam_tools pcd2octomap <input_pcd_file> <output_bt_file> --rotate
 ````
 
-For launch file;
+Or just use launch file:
 
 ```
 roslaunch 3D_Slam_tools straightener.launch input_path:="/home/youliang/catkin_ws/input_PC.pcd" output_path:="/home/youliang/catkin_ws/output_octo.bt"
 ````
+
+** Use arrow key to control the rotation of the map.
 
 
 ### IMU TF publisher
