@@ -15,7 +15,7 @@ source devel/setup.bash
 
 ## Run Tools
 
-### 3D Mapping
+### 3D SLAM
 Run with LOAM package with ROS bag file (default path is in launch file)
 ```
 roslaunch 3D_Slam_tools loam_project.launch
@@ -61,6 +61,24 @@ To run the node:
 ```
 rosrun 3D_Slam_tools imu_TFpublisher
 ````
+
+### Map your own bag file
+
+#### Velodyne
+Follow the [velodyne setup tutorial](http://wiki.ros.org/velodyne/Tutorials/Getting%20Started%20with%20the%20Velodyne%20VLP16) and run the .launch file for pointcloud visualization on rviz. 
+
+
+### VectorNav IMU
+If IMU is used (Vectornav 100), use the ROS package [imu_vn_100](https://github.com/KumarRobotics/imu_vn_100). Run the .launch file to receive the imu data on ROS topic `/imu/imu` and `/imu/rpy`
+
+After setup, conduct data collection via rosbag with a command
+
+```
+rosbag record -a
+````
+
+When ctrl-c, .bag file will be saved in current working directory
+
 
 
 ### TO BE CONTINUE
