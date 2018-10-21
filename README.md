@@ -69,7 +69,12 @@ Follow the [velodyne setup tutorial](http://wiki.ros.org/velodyne/Tutorials/Gett
 
 
 #### VectorNav IMU
-If IMU is used (Vectornav 100), use the ROS package [imu_vn_100](https://github.com/KumarRobotics/imu_vn_100). Run the .launch file to receive the imu data on ROS topic `/imu/imu` and `/imu/rpy`
+If IMU is used (Vectornav 100), use the ROS package [imu_vn_100](https://github.com/KumarRobotics/imu_vn_100). Run the .launch file below to receive the imu data on ROS topic `/imu/imu` and `/imu/rpy`
+
+```
+sudo chmod 666 /dev/ttyUSB0
+roslaunch 3D_Slam_tools imu_vn_100.launch
+````
 
 After setup, conduct data collection via rosbag with a command
 
