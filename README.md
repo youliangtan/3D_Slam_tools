@@ -15,7 +15,7 @@ source devel/setup.bash
 
 ## Run Tools
 
-### 3D Mapping
+### 1) 3D SLAM
 Run with LOAM package with ROS bag file (default path is in launch file)
 ```
 roslaunch 3D_Slam_tools loam_project.launch
@@ -32,21 +32,23 @@ rosrun map_server map_saver
 edit config file in `config/param.yaml` folder
 
 
-### Straigtener
+### 2) Straigtener
 to straighten the output .pcd file of a 3D map by using teleop of turtlebot (for convenience sake). User need to open RVIz and `rosrun turtlesim turtle_teleop_key` teleop to slowly straighten the map, then ctrl-c it to get the output .bt octomap file.
 
 ```
 rosrun 3D_Slam_tools pcd2octomap <input_pcd_file> <output_bt_file> --rotate
 ````
 
-For launch file;
+Or just use launch file:
 
 ```
 roslaunch 3D_Slam_tools straightener.launch input_path:="/home/youliang/catkin_ws/input_PC.pcd" output_path:="/home/youliang/catkin_ws/output_octo.bt"
 ````
 
+** Use arrow key to control the rotation of the map.
 
-### IMU TF publisher
+
+### 3) IMU TF publisher
 This node will get /imu sensor msg, /point_cloud message, then transform it in a meaningful way to the SLAM node. Currently using vn100 imu for testing.
 
 Use ROS driver below to read imu publish data, in /imu/imu and /imu/imu topics
@@ -60,5 +62,28 @@ To run the node:
 rosrun 3D_Slam_tools imu_TFpublisher
 ````
 
+### 4) Map your own bag file
 
-### TO BE CONTINUE
+#### Velodyne
+Follow the [velodyne setup tutorial](http://wiki.ros.org/velodyne/Tutorials/Getting%20Started%20with%20the%20Velodyne%20VLP16) and run the .launch file for pointcloud visualization on rviz. 
+
+
+#### VectorNav IMU
+If IMU is used (Vectornav 100), use the ROS package [imu_vn_100](https://github.com/KumarRobotics/imu_vn_100). Run the .launch file below to receive the imu data on ROS topic `/imu/imu` and `/imu/rpy`
+
+```
+sudo chmod 666 /dev/ttyUSB0
+roslaunch 3D_Slam_tools imu_vn_100.launch
+````
+
+After setup, conduct data collection via rosbag with a command
+
+```
+rosbag record -a
+````
+
+When ctrl-c, .bag file will be saved in current working directory
+
+
+
+### 5) TO BE CONTINUE
