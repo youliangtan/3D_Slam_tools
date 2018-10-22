@@ -1,7 +1,12 @@
 
 test: "Param is working!"
 
-## Lase Odometry Node
+## Scan Registration Node
+lidar: "VLP-16"  # options: VLP-16  HDL-32  HDL-64E
+imuHistorySize: 10
+min_pointDist: 1.5  # in meters, default 0.01
+
+## Laser Odometry Node
 ioRatio: 2            # default 2
 deltaTAbort: 0.2      # default 0.1
 deltaRAbort: 0.2      # default 0.1
@@ -13,8 +18,8 @@ mapFilterSize: 0.8              # default 0.6
 
 ## dynamic points removal 
 scanPeriod: 0.1
-isRemoveMovingObject: true
-gradThreshold: 20
-phiRegion: 5
-phiDiffFactor: 0.1
-reserveDistance: 0.001
+isRemoveMovingObject: false #true
+gradThreshold: 80 #20
+phiRegion: 80 #5
+phiDiffFactor:  1.2 #0.1
+reserveDistance: 0.2 #0.001
