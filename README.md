@@ -14,13 +14,13 @@ source devel/setup.bash
 ````
 
 ## Record ROS bag file
-Bag file is recorded to run the SLAM remotely after the recording process. Here Velodyne and IMU are used in the recording process
+Bag file is recorded to run the SLAM remotely after the recording process. Here Velodyne and IMU are used in the recording process of an indoor environment.
 
-#### Sensor Setup for Velodyne
+#### 1) Sensor Setup for Velodyne
 Follow the [velodyne setup tutorial](http://wiki.ros.org/velodyne/Tutorials/Getting%20Started%20with%20the%20Velodyne%20VLP16) and run the .launch file for pointcloud visualization on rviz. 
 
 
-#### Sensor Setiup for VectorNav IMU
+#### 2) Sensor Setup for VectorNav IMU
 If IMU is used (Vectornav 100), use the ROS package [imu_vn_100](https://github.com/KumarRobotics/imu_vn_100). Run the .launch file below to receive the imu data on ROS topic `/imu/imu` and `/imu/rpy`
 
 ```
@@ -37,7 +37,7 @@ rosbag record -a
 When ctrl-c, .bag file will be saved in current working directory
 
 
-#### Encoder Odometry Input
+#### 3) Encoder Odometry Input
 
 TO BE UPDATED 
 
@@ -91,7 +91,7 @@ Convert input .pgm to transparent .png map. Then user can use image editting too
 convert input.pgm  -fuzz 20% -transparent white output.png
 ````
 
-### 3) IMU TF publisher
+### 4) IMU TF publisher
 If IMU is used, this node will get /imu sensor msg, /point_cloud message, then transform it in a meaningful way to the SLAM node. Currently using vn100 imu for testing.
 
 Use ROS driver below to read imu publish data, in /imu/imu and /imu/imu topics
@@ -104,10 +104,6 @@ To run the node:
 ```
 rosrun 3D_Slam_tools imu_TFpublisher
 ````
-
-
-
-
 
 
 ### 5) TO BE CONTINUE
