@@ -78,10 +78,10 @@ roslaunch 3D_Slam_tools straightener.launch input_path:="/home/youliang/catkin_w
 
 
 ### 3) 3D Octomap to 2D Occupancy map
-Convert .bt file to slices occupancy map .pgm image file. Run map_saver in another terminal to save the map
+Convert .bt file to slices occupancy map .pgm image file. Run map_saver in another terminal to save the map. Specify the `PATH_TO_BT_FILE`, optional float value of `Z_MIN` and `Z_MAX`. Both z-value are respected to the velodyne's position.
 
 ```
-roslaunch 3D_Slam_tools octomap_mapping.launch path:=PATH_TO_BT_FILE z_min:=OPTIONAL_FLOAT  z_max:=OPTIONAL_FLOAT
+roslaunch 3D_Slam_tools octomap_mapping.launch path:=PATH_TO_BT_FILE z_min:=Z_MIN  z_max:=Z_MAX
 rosrun map_server map_saver
 ````
 
