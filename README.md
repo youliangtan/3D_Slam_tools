@@ -41,8 +41,11 @@ When ctrl-c, .bag file will be saved in current working directory
 
 TO BE UPDATED 
 
+Get encoder odometry from turtlebot after 'bringup' the robot.
+
 ```
-turtlebot_bring up
+roslaunch turtlebot_bringup minimal.launch
+rostopic echo /odom
 ````
 
 
@@ -58,7 +61,7 @@ To save .pcd and .bt files on fly, Run:
 rosrun 3D_Slam_tools pcd2octomap_node
 ````
 
-edit config file in `config/param.yaml` folder
+**For tuning, edit config file at `config/param.yaml`.
 
 
 ### 2) PCD Straigtener
@@ -91,18 +94,14 @@ Convert input .pgm to transparent .png map. Then user can use image editting too
 convert input.pgm  -fuzz 20% -transparent white output.png
 ````
 
-### 4) IMU TF publisher
+### 4) Odometry Handler Node
 If IMU is used, this node will get /imu sensor msg, /point_cloud message, then transform it in a meaningful way to the SLAM node. Currently using vn100 imu for testing.
 
-Use ROS driver below to read imu publish data, in /imu/imu and /imu/imu topics
+If encoder odom is used, /odom will be subcribed and publish to /tf, in terms of ` "odom_init"->"camera_init"->"encoder_odom" `.
 
+To run the individual node:
 ```
-git clone git@github.com:KumarRobotics/imu_vn_100.git
-````
-
-To run the node:
-```
-rosrun 3D_Slam_tools imu_TFpublisher
+rosrun 3D_Slam_tools odom_handler
 ````
 
 
