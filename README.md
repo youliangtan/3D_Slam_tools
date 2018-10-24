@@ -16,11 +16,11 @@ source devel/setup.bash
 ## Record ROS bag file
 Bag file is recorded to run the SLAM remotely after the recording process. Here Velodyne and IMU are used in the recording process of an indoor environment.
 
-#### 1) Sensor Setup for Velodyne
+### 1) Sensor Setup for Velodyne
 Follow the [velodyne setup tutorial](http://wiki.ros.org/velodyne/Tutorials/Getting%20Started%20with%20the%20Velodyne%20VLP16) and run the .launch file for pointcloud visualization on rviz. 
 
 
-#### 2) Sensor Setup for VectorNav IMU
+### 2) Sensor Setup for VectorNav IMU
 If IMU is used (Vectornav 100), use the ROS package [imu_vn_100](https://github.com/KumarRobotics/imu_vn_100). Run the .launch file below to receive the imu data on ROS topic `/imu/imu` and `/imu/rpy`
 
 ```
@@ -37,7 +37,7 @@ rosbag record -a
 When ctrl-c, .bag file will be saved in current working directory
 
 
-#### 3) Encoder Odometry Input
+### 3) Encoder Odometry Input
 
 TO BE UPDATED 
 
