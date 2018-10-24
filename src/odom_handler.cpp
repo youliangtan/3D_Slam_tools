@@ -1,11 +1,21 @@
+/*   
+  ODOM HANDLER NODE:  Handle Pointcloud odometry prior to LOAM 3D Slam process
+  Odometry source: IMU and Encoder
+  The node here also manage the tf transformation and publishing
+*/
+
+
 // select imu msg input by input mode 0 or 1
 
 #include <ros/ros.h>
 #include <tf/transform_broadcaster.h>
+#include <tf/transform_listener.h>
+
 // sensor msg
 #include <sensor_msgs/Imu.h>
 #include <geometry_msgs/Vector3Stamped.h>
 #include <sensor_msgs/PointCloud2.h>
+#include <nav_msgs/Odometry.h>
 #include <pcl_conversions/pcl_conversions.h>
 // pcl
 #include <pcl/io/pcd_io.h>
@@ -19,7 +29,6 @@
 // Sub: to /imu sensor_msgs/Imu
 // Pub: to tf of imu/imu orientation
 void imu_msgCallBack2(const sensor_msgs::Imu::ConstPtr& imuIn){
-  ROS_INFO("test exist %f", imuIn->linear_acceleration.z);   // assume accel input is in terms from 0-1
 
   // quaternion to rpy
   double roll, pitch, yaw;
@@ -50,36 +59,53 @@ void imu_msgCallBack2(const sensor_msgs::Imu::ConstPtr& imuIn){
 // // =============================== Main IMU and PCD Transform Class ===========================================
 
 // transfrom IMU according to imu/rpy topic
-class IMU_CloudTransform
+class OdomHandler
 {
   private:
 
     ros::Publisher _pub_IMUfiltered;      ///< (high frequency) filtered orientation without trans imu publisher
-    ros::Publisher _pub_cloudTransformed;    ///< (low frequency) filtered transformed cloud publisher
+    ros::Publisher _pub_cloudTransformed; ///< (low frequency) filtered transformed cloud publisher
     ros::Subscriber _sub_IMUrpy;          ///< (high frequency) imu vector3 subscriber
     ros::Subscriber _sub_IMUmsg;          ///< (high frequency) imu msg subscriber
-
+    ros::Subscriber _sub_encoderOdom;     ///< (high frequency) robot encoder msg subscriber
     ros::Subscriber _sub_velodyneCloud;   ///< (low frequency) velodyne raw cloud subscriber
     
     geometry_msgs::Vector3Stamped imu_rpy;
     sensor_msgs::Imu imu_msg;             // to get imu_msg, and change its orientation
+    int is_encoderOdom_init;              // 1 if first odom value
+    tf::Transform encoderOdom_init_tf;   // encoder transform odom value for first reading
+    tf::TransformListener listener;
+
+
 
   public:
 
     //setup pub and sub
     bool setup(ros::NodeHandle& node)
     {
-
+      // --- IMU filtered msg with standard imu format with rpy orientation
       _pub_IMUfiltered = node.advertise<sensor_msgs::Imu> ("/imu_filtered", 5);
-      _pub_cloudTransformed =  node.advertise<sensor_msgs::PointCloud2> ("/velo_pointsTransformed", 1);
       
-      _sub_IMUrpy = node.subscribe<geometry_msgs::Vector3Stamped>("/imu/rpy", 10, &IMU_CloudTransform::imu_rpyCallback, this);
-      _sub_velodyneCloud = node.subscribe<sensor_msgs::PointCloud2::Ptr>("/velodyne_points", 2, &IMU_CloudTransform::cloudTransform_callback, this);
-      _sub_IMUmsg = node.subscribe<sensor_msgs::Imu>("/imu/imu", 10, &IMU_CloudTransform::imu_msgCallback, this);
+      // --- Publish static orientation pointcloud with transformed input pcd based of IMUrpy.orientation
+      _pub_cloudTransformed =  node.advertise<sensor_msgs::PointCloud2> ("/velo_pointsTransformed", 1);
+
+      // --- Source cloud from velodyne
+      _sub_velodyneCloud = node.subscribe<sensor_msgs::PointCloud2::Ptr>("/velodyne_points", 2, &OdomHandler::cloudTransform_callback, this);
+      
+      // --- IMU rpy and rpy standard msg from IMU sensor
+      _sub_IMUrpy = node.subscribe<geometry_msgs::Vector3Stamped>("/imu/rpy", 10, &OdomHandler::imu_rpyCallback, this);
+      _sub_IMUmsg = node.subscribe<sensor_msgs::Imu>("/imu/imu", 10, &OdomHandler::imu_msgCallback, this);
+      
+      // --- Encoder odom msg from robot
+      _sub_encoderOdom = node.subscribe<nav_msgs::Odometry::Ptr>("/odom", 10, &OdomHandler::encoderOdom_Callback, this);
+
+      is_encoderOdom_init = 1;
 
       ROS_INFO("Done with Setup of Sub and Pub for node");
       return true;
     }
+
+
 
     // sub to /imu/imu to get retrieve all info of sensor
     void imu_msgCallback(const sensor_msgs::Imu::ConstPtr& imuIn){
@@ -87,10 +113,11 @@ class IMU_CloudTransform
     }
 
 
+
     // sub to /imu/ geometry_msgs/Vector3Stamped
     void imu_rpyCallback(const geometry_msgs::Vector3Stamped::ConstPtr& imuIn){
 
-      // tf
+      // // Managing TF publisher
       static tf::TransformBroadcaster br;
       tf::Transform transform;
       transform.setOrigin( tf::Vector3(0, 0, 0.0) );
@@ -102,9 +129,9 @@ class IMU_CloudTransform
       transform.setRotation(q);
       br.sendTransform(tf::StampedTransform(transform, imu_rpy.header.stamp, "odom", "base_link")); //use imu orientation as odom
 
-      // set value to new imu publisher
-      sensor_msgs::Imu imuOut;
-      // imuOut.header = "imu";      
+      // // Managing IMU Publisher
+      sensor_msgs::Imu imuOut;  // set value to new imu publisher
+      
       imuOut.header = imu_rpy.header;
 
       imuOut.orientation.x = q.x();
@@ -119,6 +146,7 @@ class IMU_CloudTransform
 
       _pub_IMUfiltered.publish(imuOut);
     }
+
 
 
     // transform pcd to imu rpy frame
@@ -149,7 +177,69 @@ class IMU_CloudTransform
       _pub_cloudTransformed.publish(msg);
     }
   
+    
 
+    // Publish encoder odom msg to TF (camera_init to encoderOdom)
+    void encoderOdom_Callback(const nav_msgs::Odometry::Ptr _encoderOdom){
+
+      // encoder init till get tf of laser_odom
+      if (is_encoderOdom_init == 1){
+        // // Managing TF publisher
+
+        float x, y, z, w;
+        x =  _encoderOdom->pose.pose.position.x;
+        y =  _encoderOdom->pose.pose.position.y;
+        z =  _encoderOdom->pose.pose.position.z;
+        tf::Vector3 vec(x,y,z);
+
+        // quaternion to rpy
+        double roll, pitch, yaw;
+        tf::Quaternion orientation;
+        tf::quaternionMsgToTF(_encoderOdom->pose.pose.orientation, orientation);
+        tf::Matrix3x3(orientation).getRPY(roll, pitch, yaw);
+
+        //rpy to quaternion
+        tf::Quaternion quat;
+        quat.setRPY(roll, pitch, yaw);
+
+        encoderOdom_init_tf.setOrigin(vec);
+        encoderOdom_init_tf.setRotation(quat);
+
+        tf::StampedTransform laser_transform;
+
+        try{
+          listener.lookupTransform("/camera_init", "/laser_odom",  ros::Time(0), laser_transform);
+          is_encoderOdom_init = 0;   
+        }
+        catch(tf::TransformException ex){      
+          ROS_INFO("Waiting for laser_odom tf msg...");    
+        }
+        
+      }
+
+      // // Managing TF publisher
+      static tf::TransformBroadcaster br;
+      tf::Transform transform;
+
+      float x, y, z, w;
+      x = _encoderOdom->pose.pose.position.x;
+      y = _encoderOdom->pose.pose.position.y;
+      z = _encoderOdom->pose.pose.position.z;
+      tf::Vector3 vec(x,y,z);
+
+      x = _encoderOdom->pose.pose.orientation.x;
+      y = _encoderOdom->pose.pose.orientation.y;
+      z = _encoderOdom->pose.pose.orientation.z;
+      w = _encoderOdom->pose.pose.orientation.w;
+      tf::Quaternion quat(x,y,z,w);
+      
+      transform.setOrigin(vec);
+      transform.setRotation(quat);
+
+      br.sendTransform(tf::StampedTransform(encoderOdom_init_tf, imu_rpy.header.stamp, "odom_init", "camera_init")); //use imu orientation as odom
+      br.sendTransform(tf::StampedTransform(transform, imu_rpy.header.stamp, "odom_init", "encoder_odom")); //use imu orientation as odom
+
+    }
 
 };
 
@@ -163,7 +253,7 @@ class IMU_CloudTransform
 
 int main(int argc, char** argv){
 
-  ros::init(argc, argv, "imu_tf_broadcaster");
+  ros::init(argc, argv, "odom_handler_node");
   ros::NodeHandle node;
 
   // Get Arguments
@@ -183,8 +273,8 @@ int main(int argc, char** argv){
   else{
     ROS_INFO("Using msg geometry_msgs/Vector3Stamped!!");
 
-    IMU_CloudTransform imu_cloudtransform;
-    if (imu_cloudtransform.setup(node)) {
+    OdomHandler odom_handler;
+    if (odom_handler.setup(node)) {
       // successful initialization 
       ros::spin();
     }   

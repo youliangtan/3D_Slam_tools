@@ -45,7 +45,7 @@ void save_interrupt(int s){
     stringstream ss; //convert int to str
     ss << output_count;
     string idx = ss.str();
-    tree.writeBinary( "output_bt" + idx + "..bt" );    // saving .bt file
+    tree.writeBinary( "output_bt" + idx + ".bt" );    // saving .bt file
     pcl::io::savePCDFileASCII ("output_pcd" + idx + ".pcd", *output_cloud);
 
     cout<<"SUCCESS: Output .bt file is saved!! "<<endl;

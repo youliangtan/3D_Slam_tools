@@ -1,4 +1,5 @@
 /*
+This node is used in straightener.launch file, to straighten pointcloud
 Usage: pcd2octomap <input_file> <output_file> --rotate
 */
 

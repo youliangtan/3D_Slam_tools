@@ -7,8 +7,8 @@
 
   <node pkg="loam_velodyne" type="multiScanRegistration" name="multiScanRegistration" output="screen">
     <rosparam command="load" file="$(find 3D_Slam_tools)/config/param.yaml" />
-    <remap from="/multi_scan_points" to="/velo_pointsTransformed"/>   <!-- velo_pointsTransformed -->
-    <remap from="/imu/data" to="/imu_nan"/>
+    <remap from="/multi_scan_points" to="/velodyne_points"/>   <!-- velo_pointsTransformed -->
+    <remap from="/imu/data" to="/imu_filtered"/>
   </node>
 
   <node pkg="loam_velodyne" type="laserOdometry" name="laserOdometry" output="screen" respawn="true">
@@ -16,7 +16,7 @@
   </node>
 
   <node pkg="loam_velodyne" type="laserMapping" name="laserMapping" output="screen">
-    <remap from="/imu/data" to="/imu/nan"/>
+    <remap from="/imu/data" to="/imu_filtered"/>
     <rosparam command="load" file="$(find 3D_Slam_tools)/config/param.yaml" />
   </node>
 
@@ -26,12 +26,12 @@
   <node pkg="loam_velodyne" type="motionRemoval" name="motionRemoval" output="screen">
   </node>
 
-  <node pkg="3D_Slam_tools" type="imu_TFpublisher" name="imu_TFpublisher">
+  <node pkg="3D_Slam_tools" type="odom_handler" name="odom_handler">
   </node>
 
 
   <!-- /home/youliang/rosbag/imu_office_large.bag  /imu/imu:=/imu_null"    imu_office_large_filter  -->
-  <node name="player" pkg="rosbag" type="play" output="screen" args=" -r 0.5 -s 0 -q --clock --pause /home/youliang/rosbag/mapping_bot_21Oct19.bag "/>
+  <node name="player" pkg="rosbag" type="play" output="screen" args=" -r 0.5 -s 0 -q --clock --pause /home/youliang/rosbag/mapping_bot_filtered.bag /tf:=/tf_dev_null "/>
   
 
   <group if="$(arg rviz)">

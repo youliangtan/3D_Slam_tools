@@ -50,8 +50,8 @@ target_link_libraries(pcd2ply ${catkin_LIBRARIES} ${PCL_LIBRARIES} )
 add_executable(ply2pcd src/ply2pcd.cpp)
 target_link_libraries(ply2pcd ${catkin_LIBRARIES} ${PCL_LIBRARIES} )
 
-add_executable(imu_TFpublisher src/imu_TFpublisher.cpp)
-target_link_libraries(imu_TFpublisher ${catkin_LIBRARIES} ${PCL_LIBRARIES})
+add_executable(odom_handler src/odom_handler.cpp)
+target_link_libraries(odom_handler ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 
 
 add_executable(carto_map_saver src/carto_map_saver.cpp)
