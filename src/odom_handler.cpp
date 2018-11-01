@@ -50,7 +50,7 @@ void imu_msgCallBack2(const sensor_msgs::Imu::ConstPtr& imuIn){
   tf::Quaternion q(imuIn->orientation.w, imuIn->orientation.x, imuIn->orientation.y, imuIn->orientation.z);
 
   transform.setRotation(q);
-  br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "world", "imu"));
+  // br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "world", "imu"));
 
 }
 
@@ -64,6 +64,7 @@ class OdomHandler
   private:
 
     ros::Publisher _pub_IMUfiltered;      ///< (high frequency) filtered orientation without trans imu publisher
+    ros::Publisher _pub_IMUstatic;        ///< Juz static imu publisher
     ros::Publisher _pub_cloudTransformed; ///< (low frequency) filtered transformed cloud publisher
     ros::Subscriber _sub_IMUrpy;          ///< (high frequency) imu vector3 subscriber
     ros::Subscriber _sub_IMUmsg;          ///< (high frequency) imu msg subscriber
@@ -85,6 +86,7 @@ class OdomHandler
     {
       // --- IMU filtered msg with standard imu format with rpy orientation
       _pub_IMUfiltered = node.advertise<sensor_msgs::Imu> ("/imu_filtered", 5);
+      _pub_IMUstatic = node.advertise<sensor_msgs::Imu> ("/imu_static", 5);   // juz static
       
       // --- Publish static orientation pointcloud with transformed input pcd based of IMUrpy.orientation
       _pub_cloudTransformed =  node.advertise<sensor_msgs::PointCloud2> ("/velo_pointsTransformed", 1);
@@ -117,6 +119,8 @@ class OdomHandler
     // sub to /imu/ geometry_msgs/Vector3Stamped
     void imu_rpyCallback(const geometry_msgs::Vector3Stamped::ConstPtr& imuIn){
 
+      // ----------------------- IMU filtered --------------
+
       // // Managing TF publisher
       static tf::TransformBroadcaster br;
       tf::Transform transform;
@@ -127,7 +131,7 @@ class OdomHandler
       tf::Quaternion q;
       q.setRPY(imu_rpy.vector.x, -imu_rpy.vector.y, -imu_rpy.vector.z); //rpy to quaternion
       transform.setRotation(q);
-      br.sendTransform(tf::StampedTransform(transform, imu_rpy.header.stamp, "odom", "base_link")); //use imu orientation as odom
+      // br.sendTransform(tf::StampedTransform(transform, imu_rpy.header.stamp, "odom", "base_link")); //use imu orientation as odom
 
       // // Managing IMU Publisher
       sensor_msgs::Imu imuOut;  // set value to new imu publisher
@@ -145,6 +149,25 @@ class OdomHandler
       ROS_INFO("publishing imu_filtered out");
 
       _pub_IMUfiltered.publish(imuOut);
+
+      // ------------------------ IMU Static ----------------
+
+      imuOut.orientation.x = 0;
+      imuOut.orientation.y = 0;
+      imuOut.orientation.z = 0;
+      imuOut.orientation.w = 0;
+      imuOut.orientation_covariance[0] = -1;
+
+      imuOut.angular_velocity.x = 0;
+      imuOut.angular_velocity.y = 0;
+      imuOut.angular_velocity.z = imuOut.angular_velocity.z;
+      // imuOut.angular_velocity_covariance[0] = -1;
+
+      imuOut.linear_acceleration.x = 0;
+      imuOut.linear_acceleration.y = 0;
+      imuOut.linear_acceleration.z = -9.8;
+
+      _pub_IMUstatic.publish(imuOut);
     }
 
 
@@ -209,6 +232,7 @@ class OdomHandler
 
         try{
           listener.lookupTransform("/camera_init", "/laser_odom",  ros::Time(0), laser_transform);
+          // once get the tf from laser_transform, change is_encoderOdom_init value to escape id statement
           is_encoderOdom_init = 0;   
         }
         catch(tf::TransformException ex){      
