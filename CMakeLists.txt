@@ -56,3 +56,7 @@ target_link_libraries(odom_handler ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 
 add_executable(carto_map_saver src/carto_map_saver.cpp)
 target_link_libraries(carto_map_saver ${catkin_LIBRARIES} ${PCL_LIBRARIES})
+
+add_executable(pcd_topic_saver src/pcd_topic_saver.cpp)
+target_link_libraries(pcd_topic_saver ${catkin_LIBRARIES} ${PCL_LIBRARIES} ${OCTOMAP_LIBRARIES} )
+
