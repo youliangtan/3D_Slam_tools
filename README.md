@@ -1,6 +1,10 @@
 # 3D_Slam_tools
 Tools to work along side with LOAM 3D lidar slam and Octomaping. The main goal here is to generate a 2D occupancy map from a 3D Map. Essentially, after generating a 3D pcd map from LOAM, we just need to specify the required height range to generate a 2D map from 3D. 
 
+Generated 3D Map and Sliced Map with LOAM and surrounding tools
+![alt text](/documentation/3D-map.png?)
+![alt text](/documentation/sliced-map.png?)
+
 ## Setup Environment
 - ROS
 - Download [LOAM Velodyne Mapping](https://github.com/yutingkevinlai/velodyne_slam), with dynamic object removal
