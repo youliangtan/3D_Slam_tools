@@ -1,7 +1,8 @@
 /*
-Simple as named, to save pcd topic to .pcd data
-USAGE:  rosrun 3D_Slam_tools pcd_topic_saver [pcd_topic]
-        Ctrl-C and will save another copy, ctrl-Z to stop completely
+    Created By: Tan You Liang, Nov 2018
+    Simple as named, to save pcd topic to .pcd data
+    USAGE:  rosrun 3D_Slam_tools pcd_topic_saver [pcd_topic]
+            Ctrl-C and will save another copy, ctrl-Z to stop completely
 */
 
 #include <iostream>

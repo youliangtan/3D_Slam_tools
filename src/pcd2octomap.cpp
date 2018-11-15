@@ -1,7 +1,10 @@
 /*
-This node is used in straightener.launch file, to straighten pointcloud
-Usage: pcd2octomap <input_file> <output_file> --rotate
-*/
+ *  Created By: Tan You Liang, Sept 2018
+ *  --------- for 3D Slam Testing ------------
+ *  change parameter in icpMatching() function
+ *  This node is used in straightener.launch file, to straighten pointcloud
+ *  Usage: pcd2octomap <input_file> <output_file> --rotate
+ */
 
 #include <iostream>
 #include <assert.h>

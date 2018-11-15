@@ -1,4 +1,6 @@
 /*   
+  Created By: Tan You Liang, Sept 2018
+  -------- 3D Slam Project --------
   ODOM HANDLER NODE:  Handle Pointcloud odometry prior to LOAM 3D Slam process
   Odometry source: IMU and Encoder
   The node here also manage the tf transformation and publishing

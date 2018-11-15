@@ -1,3 +1,9 @@
+/*
+ *  Created By: Tan You Liang, Sept 2018
+ *  - Node to capture Pointcloud topic to Octomap .bt format
+ *  - Created for Testing
+*/
+
 #include <iostream>
 #include <assert.h>
 #include <signal.h>
