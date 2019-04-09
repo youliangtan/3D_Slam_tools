@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<!-- <?xml version="1.0" encoding="utf-8"?> -->
 
 <launch>
 
@@ -7,7 +7,7 @@
 
   <node pkg="loam_velodyne" type="multiScanRegistration" name="multiScanRegistration" output="screen">
     <rosparam command="load" file="$(find 3D_Slam_tools)/config/param.yaml" />
-    <remap from="/multi_scan_points" to="/velo_pointsTransformed"/>   <!-- velo_pointsTransformed -->
+    <remap from="/multi_scan_points" to="/velodyne_points"/>   <!-- velo_pointsTransformed -->
     <remap from="/imu/data" to="/nan"/>
   </node>
 
@@ -26,19 +26,9 @@
   <node pkg="loam_velodyne" type="motionRemoval" name="motionRemoval" output="screen">
   </node>
 
-  <node pkg="3D_Slam_tools" type="odom_handler" name="odom_handler">
-  </node>
-
-
-  <!-- /home/youliang/rosbag/imu_office_large.bag  /imu/imu:=/imu_null"    imu_office_large_filter  mapping_bot_filtered  mapping_bot_21Oct19.bag -->
-  <node name="player" pkg="rosbag" type="play" output="screen" args=" -r 0.5 -s 0 -q --clock --pause /home/youliang/rosbag/testFarm.bag /tf:=/tf_dev_null "/>
-  
   <group if="$(arg rviz)">
     <node launch-prefix="nice" pkg="rviz" type="rviz" name="rviz" args="-d $(find loam_velodyne)/rviz_cfg/loam_velodyne.rviz" />
   </group>
   
-  <!--
-  <include file="/home/kevin/catkin_segmap/src/segmap/segmapper/launch/kitti/kitti_get_segments.launch"/>
-  -->
 
 </launch>
