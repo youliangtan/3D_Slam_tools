@@ -5,16 +5,18 @@ Generated 3D Map and Sliced Map with LOAM and surrounding tools
 ![alt text](/documentation/compare-map.png?)
 
 ## Setup Environment
-- ROS
-- Download [LOAM Velodyne Mapping](https://github.com/yutingkevinlai/velodyne_slam), with dynamic object removal
+- ROS obviously
+- Clone [LOAM Velodyne Mapping](https://github.com/yutingkevinlai/velodyne_slam), with dynamic object removal
 - [octo_mapping](https://github.com/OctoMap/octomap_mapping) (git clone)
 - map_saver  (apt-get install navigation)
 
 ### Compilation
+For Melodic, pls make sure that you are using `pcl 1.9`. This issue is mentioned [here](https://github.com/laboshinl/loam_velodyne#troubleshooting).
 ```
-catkin_make -DCMAKE_BUILD_TYPE=Release
+cd catkin_ws/
+catkin_make -DCMAKE_BUILD_TYPE=Release --pkg loam_velodyne 3D_Slam_tools
 source devel/setup.bash
-````
+```
 
 ## Record ROS bag file
 Bag file is recorded to run the SLAM remotely after the recording process. Here Velodyne and IMU are used in the recording process of an indoor environment.
@@ -97,7 +99,10 @@ Convert input .pgm to transparent .png map. Then user can use image editting too
 convert input.pgm  -fuzz 20% -transparent white output.png
 ````
 
-### 4) Odometry Handler Node
+
+## Note
+
+###  Odometry Handler Node
 If IMU is used, this node will get /imu sensor msg, /point_cloud message, then transform it in a meaningful way to the SLAM node. Currently using vn100 imu for testing.
 
 If encoder odom is used, /odom will be subcribed and publish to /tf, in terms of ` "odom_init"->"camera_init"->"encoder_odom" `.
@@ -106,6 +111,12 @@ To run the individual node:
 ```
 rosrun 3D_Slam_tools odom_handler
 ````
+- For `[multiScanRegistration-2] process has died [pid 19187, exit code -11` error, user will need to update pcl to 1.9, which fixes the bug for 1.8. Please refer to [here](https://blog.csdn.net/WEICHUAN1107/article/details/87688374) on how to compile pcl 1.9 from source.
 
-
-### 5) TO BE CONTINUE
+Then edit these few lines in the `CmakeList` of `oam_velodyne`:
+```cmake
+find_package(PCL 1.9.1 REQUIRED)
+include_directories(${PCL_INCLUDE_DIRS})
+link_directories(${PCL_LIBRARY_DIRS})
+add_definitions(${PCL_DEFINITIONS})
+```
