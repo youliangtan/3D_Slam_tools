@@ -1,4 +1,4 @@
-# 3D_Slam_tools
+# 3D_slam_tools
 Tools to work along side with LOAM 3D lidar slam and Octomaping. The main goal here is to generate 
 a 2D occupancy map from a 3D Map.
 
@@ -13,7 +13,7 @@ Generated 3D Map and Sliced Map with LOAM and surrounding tools
 
 ### Compilation
 
-This package is tested on ROS Kinetic. For ROS Melodic, pls refer [here](##Troubleshooting)
+This package is tested on ROS Kinetic. For ROS Melodic, pls refer [here](#Troubleshooting)
 ```bash
 cd catkin_ws/
 catkin_make -DCMAKE_BUILD_TYPE=Release --pkg loam_velodyne 3D_Slam_tools
@@ -21,7 +21,10 @@ catkin_make -DCMAKE_BUILD_TYPE=Release --pkg loam_velodyne 3D_Slam_tools
 
 ## Record ROS bag file
 Bag file is recorded to run the SLAM remotely after the recording process. Here Velodyne and IMU are used 
-in the recording process of an indoor environment.
+in the recording process of an indoor environment. 
+
+Or, you can download a sample rosbag file for testing, 
+[here](https://drive.google.com/drive/folders/1VpcCpFxOT84FUbuzQ2AhoMCxcAI3budP?usp=sharing)
 
 ### 1) Sensor Setup for Velodyne
 Follow the [velodyne setup tutorial](http://wiki.ros.org/velodyne/Tutorials/Getting%20Started%20with%20the%20Velodyne%20VLP16) 
@@ -53,13 +56,16 @@ When ctrl-c, .bag file will be saved in current working directory
 
 
 ## Run Tools
+Here we will have the ROS bag file of the velodyne point clouds.
 
 ### 1) 3D SLAM with input velodyne ROS Msg
-Here we will have the ROS bag file for a indoor environmenmt. Run with LOAM package with ROS bag file 
-(default path is in launch file). User can change the rosbag path and playback setting in the .launch file.
+
+Run with LOAM package
 ```bash
 roslaunch 3D_Slam_tools loam_project.launch
 ```
+
+Subsequently open a seperate terminal to run a rosbag file. (You can even run LOAM SLAM on the fly)
 
 To save .pcd and .bt files on fly, Run this on a seperate terminal:
 ```bash
@@ -82,7 +88,7 @@ User will need to use the arrow keys to control the rotation of the map. Once co
 
 ### 3) 3D Octomap to 2D Occupancy map
 Convert .bt file to slices occupancy map .pgm image file. Run map_saver in another terminal to save the map. 
-Specify the `PATH_TO_BT_FILE`, optional float value of `Z_MIN` and `Z_MAX`. Both z-value are respected to the velodyne's position.
+Specify the `$PATH_TO_BT_FILE`, optional float value of `$Z_MIN` and `$Z_MAX`. Both z-value are respected to the velodyne's position.
 
 ```bash
 roslaunch 3D_Slam_tools octomap_mapping.launch path:=$PATH_TO_BT_FILE z_min:=$Z_MIN  z_max:=$Z_MAX
@@ -99,6 +105,7 @@ convert input.pgm  -fuzz 20% -transparent white output.png
 ## Note
 
 ###  Odometry Handler Node
+(TO BE DEVELOPED)
 
 If IMU is used, this node will get /imu sensor msg, /point_cloud message, then transform it in a meaningful way to the SLAM node. Currently using vn100 imu for testing.
 
@@ -118,8 +125,7 @@ rosrun 3D_Slam_tools odom_handler
   - As for Ubuntu 18, PCL 1.9 is not available in debian, thus there's a need to compile from source.
   - Download the PCL 1.9 release: [pcl github release](https://github.com/PointCloudLibrary/pcl/releases)
   - To compile pcl from source, please refer to [here](https://blog.csdn.net/WEICHUAN1107/article/details/87688374)
-
-
+    - Refer to _2. 自己编译安装PCL 1.9_ and copy paste those command lines
   - Once the compilation is done, edit these few lines in the `CmakeList` in `loam_velodyne`:
     ```cmake
     find_package(PCL 1.9.1 REQUIRED)
