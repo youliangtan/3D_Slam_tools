@@ -8,8 +8,7 @@ Generated 3D Map and Sliced Map with LOAM and surrounding tools
 ## Setup Environment
 - ROS, obviously
 - Clone [LOAM Velodyne Mapping](https://github.com/yutingkevinlai/velodyne_slam), with dynamic object removal
-- [octo_mapping](https://github.com/OctoMap/octomap_mapping) (git clone)
-- map_saver  (apt-get install navigation)
+- `sudo apt-get install ros-$ROS_DISTRO-navigation ros-$ROS_DISTRO-octomap-mapping`
 
 ### Compilation
 
@@ -80,18 +79,24 @@ When a 3d map is generated, there's a tendency that the map's floor is not exact
 will need to straighten the output .pcd file of a 3D map (by using teleop of turtlebot for convenience sake).
 
 ```bash
-roslaunch 3D_Slam_tools straightener.launch input_path:="/home/youliang/catkin_ws/input_PC.pcd" output_path:="/home/youliang/catkin_ws/output_octo.bt"
+roslaunch 3D_Slam_tools straightener.launch \
+    input_path:="$HOME/catkin_ws/output_pcd0.pcd" \
+    output_path:="$HOME/catkin_ws/straighten_map.bt"
 ```
 
-User will need to use the arrow keys to control the rotation of the map. Once completed, press ctrl-c it to get the output .bt octomap file.
+User will need to use the arrow keys to control the rotation of the map. Once completed, press ctrl-c 
+to get the output .bt octomap file.
 
 
 ### 3) 3D Octomap to 2D Occupancy map
-Convert .bt file to slices occupancy map .pgm image file. Run map_saver in another terminal to save the map. 
-Specify the `$PATH_TO_BT_FILE`, optional float value of `$Z_MIN` and `$Z_MAX`. Both z-value are respected to the velodyne's position.
+Slice .bt file to occupancy map .pgm image file. Please specify the 
+`$PATH_TO_BT_FILE`, optional float value of `$Z_MIN` and `$Z_MAX`. 
+Both z-value are respected to the velodyne's position.
 
 ```bash
+# Run the map file
 roslaunch 3D_Slam_tools octomap_mapping.launch path:=$PATH_TO_BT_FILE z_min:=$Z_MIN  z_max:=$Z_MAX
+# Run map_saver in another terminal to save the map. 
 rosrun map_server map_saver
 ```
 
@@ -101,15 +106,16 @@ Convert input .pgm to transparent .png map. Then user can use image editting too
 convert input.pgm  -fuzz 20% -transparent white output.png
 ```
 
-
 ## Note
 
 ###  Odometry Handler Node
 (TO BE DEVELOPED)
 
-If IMU is used, this node will get /imu sensor msg, /point_cloud message, then transform it in a meaningful way to the SLAM node. Currently using vn100 imu for testing.
+If IMU is used, this node will get `/imu` sensor msg, `/point_cloud` message, 
+then transform it in a meaningful way to the SLAM node. Currently using vn100 imu for testing.
 
-If encoder odom is used, /odom will be subcribed and publish to /tf, in terms of ` "odom_init"->"camera_init"->"encoder_odom" `.
+If encoder odom is used, /odom will be subcribed and publish to `/tf`, in terms of
+ ` "odom_init"->"camera_init"->"encoder_odom" `.
 
 To run the individual node:
 ```
