@@ -6,7 +6,10 @@ Generated 3D Map and Sliced Map with LOAM and surrounding tools
 ![alt text](/documentation/compare-map.png?)
 
 ## Setup Environment
-- ROS, obviously
+- ROS, obviously (melodic or kinetic only)
+
+
+Create a new ros workspace, then :
 - Clone [LOAM Velodyne Mapping](https://github.com/yutingkevinlai/velodyne_slam), with dynamic object removal
 - `sudo apt-get install ros-$ROS_DISTRO-navigation ros-$ROS_DISTRO-octomap-mapping`
 
