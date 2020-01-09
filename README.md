@@ -7,9 +7,13 @@ Generated 3D Map and Sliced Map with LOAM and surrounding tools
 
 ## Setup Environment
 - ROS, obviously (melodic or kinetic only)
-Create a new ros workspace then :
+
+
+Create a new ros workspace, then :
 - Clone [LOAM Velodyne Mapping](https://github.com/yutingkevinlai/velodyne_slam), with dynamic object removal
 - [octo_mapping](https://github.com/OctoMap/octomap_mapping) (git clone)
+
+
 Install map_saver using ros navigation package
 ```
 sudo apt-get install ros-melodic-navigation
