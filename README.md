@@ -82,9 +82,7 @@ When a 3d map is generated, there's a tendency that the map's floor is not exact
 will need to straighten the output .pcd file of a 3D map (by using teleop of turtlebot for convenience sake).
 
 ```bash
-roslaunch 3D_Slam_tools straightener.launch \
-    input_path:="$HOME/catkin_ws/output_pcd0.pcd" \
-    output_path:="$HOME/catkin_ws/straighten_map.bt"
+roslaunch 3D_Slam_tools straightener.launch input_path:="$HOME/catkin_ws/output_pcd0.pcd" output_path:="$HOME/catkin_ws/straighten_map.bt"
 ```
 
 User will need to use the arrow keys to control the rotation of the map. Once completed, press ctrl-c 
