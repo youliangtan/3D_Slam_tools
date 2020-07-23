@@ -25,7 +25,6 @@
 #include <pcl/common/transforms.h>
 
 
-
 // using std::placeholders::_1;
 
 // Sub: to /imu sensor_msgs/Imu
